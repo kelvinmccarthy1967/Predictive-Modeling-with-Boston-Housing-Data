@@ -1,0 +1,1644 @@
+
+## Please restrict the use of images to those located within the 'indoorCVPR_09/Images' folder when constructing models.
+import os
+from pathlib import Path
+from zipfile import ZipFile
+
+# Install necessary libraries
+!pip install -q kaggle kagglehub
+
+# Upload kaggle.json to Colab
+from google.colab import files
+files.upload()  # Upload kaggle.json here
+
+# Set up Kaggle directory
+!mkdir -p ~/.kaggle
+!cp kaggle.json ~/.kaggle/
+!chmod 600 ~/.kaggle/kaggle.json
+
+# Use kagglehub to download the dataset
+import kagglehub
+
+# Download dataset
+print("Downloading dataset using kagglehub...")
+path = kagglehub.dataset_download("itsahmad/indoor-scenes-cvpr-2019")
+
+# Confirm the path to dataset files
+print(f"Path to dataset files: {path}")
+
+# Unzip dataset if necessary (if kagglehub provides a zip file)
+zip_file_path = os.path.join(path, 'indoor-scenes-cvpr-2019.zip')
+extract_path = 'indoorCVPR_09'
+
+if os.path.exists(zip_file_path):
+    with ZipFile(zip_file_path, 'r') as zip_ref:
+        zip_ref.extractall(extract_path)
+    print(f"Dataset unzipped to: {extract_path}")
+else:
+    print("No zip file found; assuming files are already extracted.")
+
+# Dataset directory
+img_dir = os.path.join(extract_path, 'Images')
+
+# Generate desired output
+total_files = 0
+valid_extensions = {'.jpg', '.jpeg', '.png'}
+
+for root, dirs, files in os.walk(img_dir):
+    image_files = [file for file in files if Path(file).suffix.lower() in valid_extensions]
+    level = root.replace(img_dir, '').count(os.sep)
+    indent = ' ' * 4 * level
+    print(f'{indent}{os.path.basename(root)}/ ({len(image_files)} files)')
+    total_files += len(image_files)
+
+print(f'There are {total_files} images in this dataset.')
+No file chosen Upload widget is only available when the cell has been executed in the current browser session. Please rerun this cell to enable.
+Saving kaggle.json to kaggle.json
+Downloading dataset using kagglehub...
+Downloading from https://www.kaggle.com/api/v1/datasets/download/itsahmad/indoor-scenes-cvpr-2019?dataset_version_number=1...
+100%|██████████| 2.34G/2.34G [00:19<00:00, 131MB/s]
+Extracting files...
+Path to dataset files: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1
+No zip file found; assuming files are already extracted.
+There are 0 images in this dataset.
+import kagglehub
+
+# Download latest version
+path = kagglehub.dataset_download("itsahmad/indoor-scenes-cvpr-2019")
+
+print("Path to dataset files:", path)
+Path to dataset files: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1
+import os
+import shutil
+from pathlib import Path
+
+# Path to the dataset directory provided by kagglehub
+dataset_path = '/root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1'
+
+# Check for different possible image directory locations
+possible_img_dirs = [
+    os.path.join(dataset_path, 'Images'),  # Original expected location
+    os.path.join(dataset_path, 'indoorCVPR_09', 'Images'),  # If extracted to 'indoorCVPR_09'
+    dataset_path  # If images are directly in the dataset root
+]
+
+img_dir = None
+for dir_path in possible_img_dirs:
+    if os.path.exists(dir_path) and os.path.isdir(dir_path):
+        img_dir = dir_path
+        break
+
+# If img_dir is still None, it means none of the expected locations were found
+if img_dir is None:
+    raise FileNotFoundError(f"Image directory not found in any expected locations within {dataset_path}. Please verify the dataset structure.")
+
+# List of folders to remove
+folders_to_remove = ['laboratorywet', 'laundromat', 'library', 'livingroom', 'lobby', 'locker_room']
+
+# Remove the specified folders
+for folder_name in folders_to_remove:
+    folder_path = os.path.join(img_dir, folder_name)
+    if os.path.exists(folder_path):
+        shutil.rmtree(folder_path)  # Remove the folder and its contents
+        print(f"Removed folder: {folder_path}")
+    else:
+        print(f"Folder not found: {folder_path}")
+
+# Generate desired output after removing folders
+total_files = 0
+valid_extensions = {'.jpg', '.jpeg', '.png'}
+
+for root, dirs, files in os.walk(img_dir):
+    image_files = [file for file in files if Path(file).suffix.lower() in valid_extensions]
+    level = root.replace(img_dir, '').count(os.sep)
+    indent = ' ' * 4 * level
+    print(f'{indent}{os.path.basename(root)}/ ({len(image_files)} files)')
+    total_files += len(image_files)
+
+print(f'There are {total_files} images in this dataset after removing specified folders.')
+Removed folder: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/laboratorywet
+Removed folder: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/laundromat
+Removed folder: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/library
+Removed folder: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/livingroom
+Removed folder: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/lobby
+Removed folder: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/locker_room
+Images/ (0 files)
+    prisoncell/ (103 files)
+    children_room/ (112 files)
+    warehouse/ (506 files)
+    meeting_room/ (233 files)
+    clothingstore/ (106 files)
+    inside_bus/ (102 files)
+    shoeshop/ (116 files)
+    computerroom/ (114 files)
+    subway/ (539 files)
+    dining_room/ (274 files)
+    buffet/ (111 files)
+    casino/ (515 files)
+    kitchen/ (734 files)
+    cloister/ (120 files)
+    grocerystore/ (213 files)
+    pantry/ (384 files)
+    mall/ (176 files)
+    gameroom/ (127 files)
+    hospitalroom/ (101 files)
+    dentaloffice/ (131 files)
+    fastfood_restaurant/ (116 files)
+    nursery/ (144 files)
+    garage/ (103 files)
+    videostore/ (110 files)
+    operating_room/ (135 files)
+    gym/ (231 files)
+    airport_inside/ (608 files)
+    inside_subway/ (457 files)
+    deli/ (258 files)
+    florist/ (103 files)
+    stairscase/ (155 files)
+    waitingroom/ (151 files)
+    bakery/ (405 files)
+    closet/ (135 files)
+    jewelleryshop/ (157 files)
+    tv_studio/ (166 files)
+    concert_hall/ (103 files)
+    artstudio/ (140 files)
+    bar/ (604 files)
+    greenhouse/ (101 files)
+    bedroom/ (662 files)
+    bowling/ (213 files)
+    auditorium/ (176 files)
+    movietheater/ (175 files)
+    restaurant/ (513 files)
+    winecellar/ (269 files)
+    kindergarden/ (127 files)
+    museum/ (168 files)
+    hairsalon/ (239 files)
+    toystore/ (347 files)
+    bathroom/ (197 files)
+    corridor/ (346 files)
+    church_inside/ (180 files)
+    studiomusic/ (108 files)
+    bookstore/ (380 files)
+    poolinside/ (174 files)
+    trainstation/ (153 files)
+    elevator/ (101 files)
+    office/ (109 files)
+    classroom/ (113 files)
+    restaurant_kitchen/ (107 files)
+There are 14056 images in this dataset after removing specified folders.
+import os
+import shutil
+
+# Assuming 'img_dir' is correctly set in your previous code cells
+# Example: img_dir = os.path.join(extract_path, 'Images')
+# Where 'extract_path' is defined as 'indoorCVPR_09' in your earlier cells
+
+folders_to_remove = ['laboratorywet', 'laundromat', 'library', 'livingroom', 'lobby', 'locker_room']
+
+for folder_name in folders_to_remove:
+    folder_path = os.path.join(img_dir, folder_name)
+    if os.path.exists(folder_path):
+        shutil.rmtree(folder_path)  # Remove the folder and its contents
+        print(f"Removed folder: {folder_path}")
+    else:
+        print(f"Folder not found: {folder_path}")
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/laboratorywet
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/laundromat
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/library
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/livingroom
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/lobby
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/locker_room
+# IMPORT LIBRARIES and PACKAGES
+from __future__ import absolute_import, division, print_function, unicode_literals
+from collections import Counter
+
+import os
+import re
+import random
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import PIL #Python Imaging Library
+
+import tensorflow as tf
+import tensorflow.compat.v2 as tf
+import tensorflow_datasets as tfds
+#tfds.disable_progress_bar()
+
+from glob import glob
+from tensorflow import keras
+from tensorflow.keras import datasets, layers, models
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+from IPython.display import display  # display images
+from sklearn import preprocessing
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+
+%matplotlib inline
+import os
+
+# List of folders to exclude
+exclude_folders = {'laboratorywet', 'laundromat', 'library', 'livingroom', 'lobby', 'locker_room'}
+
+# Get all subdirectories within img_dir, excluding those in exclude_folders
+image_dir = [
+    name
+    for name in os.listdir(img_dir)
+    if os.path.isdir(os.path.join(img_dir, name)) and name.lower() not in exclude_folders
+]
+
+print(f'The Image labels = {image_dir}')
+
+# SORT the directories in alphabetical order
+image_dir.sort()
+print(f'\n The SORTED Indoor Image labels = {image_dir}')
+
+print(f'\nThere are {len(image_dir)} classes of Indoor Images.')
+The Image labels = ['prisoncell', 'children_room', 'warehouse', 'meeting_room', 'clothingstore', 'inside_bus', 'shoeshop', 'computerroom', 'subway', 'dining_room', 'buffet', 'casino', 'kitchen', 'cloister', 'grocerystore', 'pantry', 'mall', 'gameroom', 'hospitalroom', 'dentaloffice', 'fastfood_restaurant', 'nursery', 'garage', 'videostore', 'operating_room', 'gym', 'airport_inside', 'inside_subway', 'deli', 'florist', 'stairscase', 'waitingroom', 'bakery', 'closet', 'jewelleryshop', 'tv_studio', 'concert_hall', 'artstudio', 'bar', 'greenhouse', 'bedroom', 'bowling', 'auditorium', 'movietheater', 'restaurant', 'winecellar', 'kindergarden', 'museum', 'hairsalon', 'toystore', 'bathroom', 'corridor', 'church_inside', 'studiomusic', 'bookstore', 'poolinside', 'trainstation', 'elevator', 'office', 'classroom', 'restaurant_kitchen']
+
+ The SORTED Indoor Image labels = ['airport_inside', 'artstudio', 'auditorium', 'bakery', 'bar', 'bathroom', 'bedroom', 'bookstore', 'bowling', 'buffet', 'casino', 'children_room', 'church_inside', 'classroom', 'cloister', 'closet', 'clothingstore', 'computerroom', 'concert_hall', 'corridor', 'deli', 'dentaloffice', 'dining_room', 'elevator', 'fastfood_restaurant', 'florist', 'gameroom', 'garage', 'greenhouse', 'grocerystore', 'gym', 'hairsalon', 'hospitalroom', 'inside_bus', 'inside_subway', 'jewelleryshop', 'kindergarden', 'kitchen', 'mall', 'meeting_room', 'movietheater', 'museum', 'nursery', 'office', 'operating_room', 'pantry', 'poolinside', 'prisoncell', 'restaurant', 'restaurant_kitchen', 'shoeshop', 'stairscase', 'studiomusic', 'subway', 'toystore', 'trainstation', 'tv_studio', 'videostore', 'waitingroom', 'warehouse', 'winecellar']
+
+There are 61 classes of Indoor Images.
+import os
+import shutil
+
+# Assuming 'img_dir' is correctly set in your previous code cells
+# Example: img_dir = os.path.join(extract_path, 'Images')
+# Where 'extract_path' is defined as 'indoorCVPR_09' in your earlier cells
+
+folders_to_remove = ['laboratorywet', 'laundromat', 'library', 'livingroom', 'lobby', 'locker_room']
+
+for folder_name in folders_to_remove:
+    folder_path = os.path.join(img_dir, folder_name)
+    if os.path.exists(folder_path):
+        shutil.rmtree(folder_path)  # Remove the folder and its contents
+        print(f"Removed folder: {folder_path}")
+    else:
+        print(f"Folder not found: {folder_path}")
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/laboratorywet
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/laundromat
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/library
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/livingroom
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/lobby
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/locker_room
+import os
+import glob
+import tensorflow as tf
+
+# Assuming 'img_dir' is correctly set in your previous code cells
+# Example: img_dir = os.path.join(extract_path, 'Images')
+# Where 'extract_path' is defined as 'indoorCVPR_09' in your earlier cells
+
+img_paths = glob.glob(os.path.join(img_dir, '*/*.*'))
+
+bad_paths = []
+
+for image_path in img_paths:
+    try:
+        img_bytes = tf.io.read_file(image_path)
+        decoded_img = tf.io.decode_image(img_bytes)
+    except tf.errors.InvalidArgumentError as e:
+        print(f"Found bad path {image_path}...{e}")
+        bad_paths.append(image_path)
+
+print("BAD PATHS:")
+for bad_path in bad_paths:
+    print(f"{bad_path}")
+BAD PATHS:
+import os
+import shutil
+from IPython.display import display
+from pathlib import Path
+import PIL
+import random
+import numpy as np
+import tensorflow as tf
+
+
+# Assuming 'img_dir' is correctly set in your previous code cells
+# Example: img_dir = os.path.join(extract_path, 'Images')
+# Where 'extract_path' is defined as 'indoorCVPR_09' in your earlier cells
+
+# --- Folder Removal ---
+folders_to_remove = ['laboratorywet', 'laundromat', 'library', 'livingroom', 'lobby', 'locker_room']
+
+for folder_name in folders_to_remove:
+    folder_path = os.path.join(img_dir, folder_name)
+    if os.path.exists(folder_path):
+        shutil.rmtree(folder_path)  # Remove the folder and its contents
+        print(f"Removed folder: {folder_path}")
+    else:
+        print(f"Folder not found: {folder_path}")
+
+# --- Update image_dir ---
+image_dir = [
+    name
+    for name in os.listdir(img_dir)
+    if os.path.isdir(os.path.join(img_dir, name))
+]
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/laboratorywet
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/laundromat
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/library
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/livingroom
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/lobby
+Folder not found: /root/.cache/kagglehub/datasets/itsahmad/indoor-scenes-cvpr-2019/versions/1/indoorCVPR_09/Images/locker_room
+# Fix the seed to reproduce the results
+SEED = 1001
+os.environ['PYTHONHASHSEED'] = str(SEED)
+os.environ['TF_CUDNN_DETERMINISTIC'] = '1'
+random.seed(SEED)
+np.random.seed(SEED)
+tf.random.set_seed(SEED)
+
+# Loop over the image directory
+for i in range(len(image_dir)):
+    # Get all image files
+    image_file = list(Path(img_dir).glob(image_dir[i] + '/*'))
+    # Open the first image using PIL
+    if image_file:  # Check if any images were found
+        img = PIL.Image.open(str(image_file[0]))
+        # Display image information
+        print(f'(Image size  = ({img.size[0]}, {img.size[1]}, {len(img.mode)}) ; Room = {image_dir[i]})')
+        display(img)
+    else:
+        print(f"No images found in folder: {image_dir[i]}")
+(Image size  = (256, 256, 3) ; Room = prisoncell)
+No description has been provided for this image
+(Image size  = (640, 480, 3) ; Room = children_room)
+No description has been provided for this image
+(Image size  = (448, 298, 3) ; Room = warehouse)
+No description has been provided for this image
+(Image size  = (256, 256, 3) ; Room = meeting_room)
+No description has been provided for this image
+(Image size  = (426, 320, 3) ; Room = clothingstore)
+No description has been provided for this image
+(Image size  = (1635, 2201, 3) ; Room = inside_bus)
+No description has been provided for this image
+(Image size  = (480, 241, 3) ; Room = shoeshop)
+No description has been provided for this image
+(Image size  = (256, 256, 3) ; Room = computerroom)
+No description has been provided for this image
+(Image size  = (515, 349, 3) ; Room = subway)
+No description has been provided for this image
+(Image size  = (1024, 888, 3) ; Room = dining_room)
+No description has been provided for this image
+(Image size  = (256, 256, 3) ; Room = buffet)
+No description has been provided for this image
+(Image size  = (307, 230, 3) ; Room = casino)
+No description has been provided for this image
+(Image size  = (256, 256, 3) ; Room = kitchen)
+No description has been provided for this image
+(Image size  = (256, 256, 3) ; Room = cloister)
+No description has been provided for this image
+(Image size  = (320, 240, 3) ; Room = grocerystore)
+No description has been provided for this image
+(Image size  = (496, 332, 3) ; Room = pantry)
+No description has been provided for this image
+(Image size  = (256, 256, 3) ; Room = mall)
+No description has been provided for this image
+(Image size  = (300, 225, 3) ; Room = gameroom)
+No description has been provided for this image
+(Image size  = (640, 480, 3) ; Room = hospitalroom)
+No description has been provided for this image
+(Image size  = (500, 375, 3) ; Room = dentaloffice)
+No description has been provided for this image
+(Image size  = (300, 240, 3) ; Room = fastfood_restaurant)
+No description has been provided for this image
+(Image size  = (460, 305, 3) ; Room = nursery)
+No description has been provided for this image
+(Image size  = (500, 315, 3) ; Room = garage)
+No description has been provided for this image
+(Image size  = (440, 330, 3) ; Room = videostore)
+No description has been provided for this image
+(Image size  = (260, 209, 3) ; Room = operating_room)
+No description has been provided for this image
+(Image size  = (638, 425, 3) ; Room = gym)
+No description has been provided for this image
+(Image size  = (2816, 2112, 3) ; Room = airport_inside)
+No description has been provided for this image
+(Image size  = (375, 500, 3) ; Room = inside_subway)
+No description has been provided for this image
+(Image size  = (500, 333, 3) ; Room = deli)
+No description has been provided for this image
+(Image size  = (500, 335, 3) ; Room = florist)
+No description has been provided for this image
+(Image size  = (256, 256, 3) ; Room = stairscase)
+No description has been provided for this image
+(Image size  = (256, 256, 3) ; Room = waitingroom)
+No description has been provided for this image
+(Image size  = (375, 500, 3) ; Room = bakery)
+No description has been provided for this image
+(Image size  = (256, 256, 3) ; Room = closet)
+No description has been provided for this image
+(Image size  = (1614, 1188, 3) ; Room = jewelleryshop)
+No description has been provided for this image
+(Image size  = (1024, 768, 3) ; Room = tv_studio)
+No description has been provided for this image
+(Image size  = (420, 284, 3) ; Room = concert_hall)
+No description has been provided for this image
+(Image size  = (600, 446, 3) ; Room = artstudio)
+No description has been provided for this image
+(Image size  = (1152, 864, 3) ; Room = bar)
+No description has been provided for this image
+(Image size  = (700, 525, 3) ; Room = greenhouse)
+No description has been provided for this image
+(Image size  = (256, 256, 3) ; Room = bedroom)
+No description has been provided for this image
+(Image size  = (640, 425, 3) ; Room = bowling)
+No description has been provided for this image
+(Image size  = (448, 336, 3) ; Room = auditorium)
+No description has been provided for this image
+(Image size  = (350, 233, 3) ; Room = movietheater)
+No description has been provided for this image
+(Image size  = (700, 525, 3) ; Room = restaurant)
+No description has been provided for this image
+(Image size  = (500, 375, 3) ; Room = winecellar)
+No description has been provided for this image
+(Image size  = (800, 600, 3) ; Room = kindergarden)
+No description has been provided for this image
+(Image size  = (600, 399, 3) ; Room = museum)
+No description has been provided for this image
+(Image size  = (256, 256, 3) ; Room = hairsalon)
+No description has been provided for this image
+(Image size  = (310, 233, 3) ; Room = toystore)
+No description has been provided for this image
+(Image size  = (1536, 2048, 3) ; Room = bathroom)
+No description has been provided for this image
+(Image size  = (256, 256, 3) ; Room = corridor)
+No description has been provided for this image
+(Image size  = (256, 256, 3) ; Room = church_inside)
+No description has been provided for this image
+(Image size  = (500, 375, 3) ; Room = studiomusic)
+No description has been provided for this image
+(Image size  = (256, 256, 3) ; Room = bookstore)
+No description has been provided for this image
+(Image size  = (400, 267, 3) ; Room = poolinside)
+No description has been provided for this image
+(Image size  = (500, 356, 3) ; Room = trainstation)
+No description has been provided for this image
+(Image size  = (1200, 1600, 3) ; Room = elevator)
+No description has been provided for this image
+(Image size  = (256, 256, 3) ; Room = office)
+No description has been provided for this image
+(Image size  = (256, 256, 3) ; Room = classroom)
+No description has been provided for this image
+(Image size  = (756, 567, 3) ; Room = restaurant_kitchen)
+No description has been provided for this image
+help(tf.keras.preprocessing.image_dataset_from_directory)
+Help on function image_dataset_from_directory in module keras.src.utils.image_dataset_utils:
+
+image_dataset_from_directory(directory, labels='inferred', label_mode='int', class_names=None, color_mode='rgb', batch_size=32, image_size=(256, 256), shuffle=True, seed=None, validation_split=None, subset=None, interpolation='bilinear', follow_links=False, crop_to_aspect_ratio=False, pad_to_aspect_ratio=False, data_format=None, verbose=True)
+    Generates a `tf.data.Dataset` from image files in a directory.
+    
+    If your directory structure is:
+    
+    ```
+    main_directory/
+    ...class_a/
+    ......a_image_1.jpg
+    ......a_image_2.jpg
+    ...class_b/
+    ......b_image_1.jpg
+    ......b_image_2.jpg
+    ```
+    
+    Then calling `image_dataset_from_directory(main_directory,
+    labels='inferred')` will return a `tf.data.Dataset` that yields batches of
+    images from the subdirectories `class_a` and `class_b`, together with labels
+    0 and 1 (0 corresponding to `class_a` and 1 corresponding to `class_b`).
+    
+    Supported image formats: `.jpeg`, `.jpg`, `.png`, `.bmp`, `.gif`.
+    Animated gifs are truncated to the first frame.
+    
+    Args:
+        directory: Directory where the data is located.
+            If `labels` is `"inferred"`, it should contain
+            subdirectories, each containing images for a class.
+            Otherwise, the directory structure is ignored.
+        labels: Either `"inferred"`
+            (labels are generated from the directory structure),
+            `None` (no labels),
+            or a list/tuple of integer labels of the same size as the number of
+            image files found in the directory. Labels should be sorted
+            according to the alphanumeric order of the image file paths
+            (obtained via `os.walk(directory)` in Python).
+        label_mode: String describing the encoding of `labels`. Options are:
+            - `"int"`: means that the labels are encoded as integers
+                (e.g. for `sparse_categorical_crossentropy` loss).
+            - `"categorical"` means that the labels are
+                encoded as a categorical vector
+                (e.g. for `categorical_crossentropy` loss).
+            - `"binary"` means that the labels (there can be only 2)
+                are encoded as `float32` scalars with values 0 or 1
+                (e.g. for `binary_crossentropy`).
+            - `None` (no labels).
+        class_names: Only valid if `labels` is `"inferred"`.
+            This is the explicit list of class names
+            (must match names of subdirectories). Used to control the order
+            of the classes (otherwise alphanumerical order is used).
+        color_mode: One of `"grayscale"`, `"rgb"`, `"rgba"`.
+            Whether the images will be converted to
+            have 1, 3, or 4 channels. Defaults to `"rgb"`.
+        batch_size: Size of the batches of data. Defaults to 32.
+            If `None`, the data will not be batched
+            (the dataset will yield individual samples).
+        image_size: Size to resize images to after they are read from disk,
+            specified as `(height, width)`.
+            Since the pipeline processes batches of images that must all have
+            the same size, this must be provided. Defaults to `(256, 256)`.
+        shuffle: Whether to shuffle the data. Defaults to `True`.
+            If set to `False`, sorts the data in alphanumeric order.
+        seed: Optional random seed for shuffling and transformations.
+        validation_split: Optional float between 0 and 1,
+            fraction of data to reserve for validation.
+        subset: Subset of the data to return.
+            One of `"training"`, `"validation"`, or `"both"`.
+            Only used if `validation_split` is set.
+            When `subset="both"`, the utility returns a tuple of two datasets
+            (the training and validation datasets respectively).
+        interpolation: String, the interpolation method used when
+            resizing images.
+            Supports `"bilinear"`, `"nearest"`, `"bicubic"`, `"area"`,
+            `"lanczos3"`, `"lanczos5"`, `"gaussian"`, `"mitchellcubic"`.
+            Defaults to `"bilinear"`.
+        follow_links: Whether to visit subdirectories pointed to by symlinks.
+            Defaults to `False`.
+        crop_to_aspect_ratio: If `True`, resize the images without aspect
+            ratio distortion. When the original aspect ratio differs from the
+            target aspect ratio, the output image will be cropped so as to
+            return the largest possible window in the image
+            (of size `image_size`) that matches the target aspect ratio. By
+            default (`crop_to_aspect_ratio=False`), aspect ratio may not be
+            preserved.
+        pad_to_aspect_ratio: If `True`, resize the images without aspect
+            ratio distortion. When the original aspect ratio differs from the
+            target aspect ratio, the output image will be padded so as to
+            return the largest possible window in the image
+            (of size `image_size`) that matches the target aspect ratio. By
+            default (`pad_to_aspect_ratio=False`), aspect ratio may not be
+            preserved.
+        data_format: If None uses keras.config.image_data_format()
+            otherwise either 'channel_last' or 'channel_first'.
+        verbose: Whether to display number information on classes and
+            number of files found. Defaults to `True`.
+    
+    Returns:
+    
+    A `tf.data.Dataset` object.
+    
+    - If `label_mode` is `None`, it yields `float32` tensors of shape
+        `(batch_size, image_size[0], image_size[1], num_channels)`,
+        encoding images (see below for rules regarding `num_channels`).
+    - Otherwise, it yields a tuple `(images, labels)`, where `images` has
+        shape `(batch_size, image_size[0], image_size[1], num_channels)`,
+        and `labels` follows the format described below.
+    
+    Rules regarding labels format:
+    
+    - if `label_mode` is `"int"`, the labels are an `int32` tensor of shape
+        `(batch_size,)`.
+    - if `label_mode` is `"binary"`, the labels are a `float32` tensor of
+        1s and 0s of shape `(batch_size, 1)`.
+    - if `label_mode` is `"categorical"`, the labels are a `float32` tensor
+        of shape `(batch_size, num_classes)`, representing a one-hot
+        encoding of the class index.
+    
+    Rules regarding number of channels in the yielded images:
+    
+    - if `color_mode` is `"grayscale"`,
+        there's 1 channel in the image tensors.
+    - if `color_mode` is `"rgb"`,
+        there are 3 channels in the image tensors.
+    - if `color_mode` is `"rgba"`,
+        there are 4 channels in the image tensors.
+
+batch_size = 32
+image_height = 256
+image_width = 256
+split = 0.2
+train_data = tf.keras.preprocessing.image_dataset_from_directory(
+  img_dir,
+  labels='inferred', # labels are generated from the directory structure
+  label_mode='int',  #'int': means labels are encoded as integers (e.g. for sparse_categorical_crossentropy loss).
+  validation_split= split,
+  subset="training",
+  seed= 1001, # set seed
+  image_size=(image_height, image_width),
+  batch_size=batch_size)
+Found 14056 files belonging to 61 classes.
+Using 11245 files for training.
+val_data = tf.keras.preprocessing.image_dataset_from_directory(
+  img_dir,
+  labels='inferred',
+  label_mode='int',
+  validation_split= split,
+  subset="validation",
+  seed=1001, # set seed
+  image_size=(image_height, image_width),
+  batch_size=batch_size)
+Found 14056 files belonging to 61 classes.
+Using 2811 files for validation.
+for img, lab in train_data.take(1):
+    print(img[1].numpy().astype("uint16"))
+    print(f'minimum = {np.amin(img[0].numpy().astype("uint16"))}, maximum = {np.amax(img[0].numpy().astype("uint16"))}')
+    break
+[[[158 153 122]
+  [176 168 132]
+  [118 107  59]
+  ...
+  [250 254 253]
+  [250 254 253]
+  [250 254 253]]
+
+ [[158 153 121]
+  [177 169 132]
+  [116 106  56]
+  ...
+  [244 248 247]
+  [244 248 247]
+  [244 248 247]]
+
+ [[158 154 121]
+  [179 171 133]
+  [114 104  53]
+  ...
+  [242 246 245]
+  [242 246 245]
+  [241 245 244]]
+
+ ...
+
+ [[165 169 142]
+  [166 170 143]
+  [164 168 141]
+  ...
+  [180 173 127]
+  [167 161 120]
+  [195 190 152]]
+
+ [[167 171 144]
+  [168 172 145]
+  [166 170 143]
+  ...
+  [171 163 115]
+  [199 192 148]
+  [199 194 153]]
+
+ [[168 172 145]
+  [168 172 145]
+  [167 171 144]
+  ...
+  [211 202 152]
+  [193 186 140]
+  [173 166 123]]]
+minimum = 8, maximum = 255
+# Plot one set of images in a space
+# 4 images wide X 4 images tall
+
+plt.figure(figsize=(12, 12))
+
+for img, lab in train_data.take(1):
+  for i in range(16):
+    ax = plt.subplot(4, 4, i + 1)
+    plt.imshow(img[i].numpy().astype("uint16"))
+    # Map the label index to name
+    plt.title(image_dir[lab[i]])
+    plt.axis("off")
+No description has been provided for this image
+for image_batch, labels_batch in train_data:
+  print(f'image_batch.shape = {image_batch.shape} \nlabels_batch.shape = {labels_batch.shape } ')
+  break
+image_batch.shape = (32, 256, 256, 3) 
+labels_batch.shape = (32,) 
+AUTOTUNE = tf.data.AUTOTUNE # Tune the value dynamically at runtime.
+
+train_data = train_data.cache().shuffle(1000).prefetch(buffer_size=AUTOTUNE)
+val_data = val_data.cache().prefetch(buffer_size=AUTOTUNE)
+normalization_layer = tf.keras.layers.Rescaling(1.0/255.0)
+import os
+import glob
+import tensorflow as tf
+
+# Assuming 'img_dir' is correctly set in your previous code cells
+# Example: img_dir = os.path.join(extract_path, 'Images')
+# Where 'extract_path' is defined as 'indoorCVPR_09' in your earlier cells
+
+img_paths = glob.glob(os.path.join(img_dir, '*/*.*'))
+
+bad_paths = []
+
+for image_path in img_paths:
+    try:
+        img_bytes = tf.io.read_file(image_path)
+        decoded_img = tf.io.decode_image(img_bytes)
+    except tf.errors.InvalidArgumentError as e:
+        print(f"Found bad path {image_path}...{e}")
+        bad_paths.append(image_path)
+
+print("BAD PATHS:")
+for bad_path in bad_paths:
+    print(f"{bad_path}")
+BAD PATHS:
+##2.Build a baseline CNN model on the training dataset and evaluate it on the test dataset.
+image_labels = [name for name in os.listdir(img_dir) if os.path.isdir(os.path.join(img_dir, name))]  # Get image labels
+lew_labels = len(image_labels)
+print(f'There are {lew_labels} classes in the image dataset')
+image_channel = 3
+
+print(f' There are {image_channel} channels in the images')
+There are 61 classes in the image dataset
+ There are 3 channels in the images
+model = tf.keras.Sequential([
+
+  layers.Rescaling(1.0/255.0, input_shape=(image_height, image_width, image_channel)),
+  layers.Conv2D(16, 3, padding='same', activation='relu'),
+  layers.MaxPooling2D(),
+  layers.Conv2D(32, 3, padding='same', activation='relu'),
+  layers.MaxPooling2D(),
+  layers.Conv2D(64, 3, padding='same', activation='relu'),
+  layers.MaxPooling2D(),
+  layers.Flatten(),
+  layers.Dense(256, activation='relu'),
+  layers.Dense(lew_labels, activation=None)
+])
+/usr/local/lib/python3.10/dist-packages/keras/src/layers/preprocessing/tf_data_layer.py:19: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.
+  super().__init__(**kwargs)
+model.compile(optimizer='adam',
+
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+
+              metrics=['accuracy'])
+model.summary()
+Model: "sequential"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Layer (type)                         ┃ Output Shape                ┃         Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ rescaling_1 (Rescaling)              │ (None, 256, 256, 3)         │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ conv2d (Conv2D)                      │ (None, 256, 256, 16)        │             448 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ max_pooling2d (MaxPooling2D)         │ (None, 128, 128, 16)        │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ conv2d_1 (Conv2D)                    │ (None, 128, 128, 32)        │           4,640 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ max_pooling2d_1 (MaxPooling2D)       │ (None, 64, 64, 32)          │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ conv2d_2 (Conv2D)                    │ (None, 64, 64, 64)          │          18,496 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ max_pooling2d_2 (MaxPooling2D)       │ (None, 32, 32, 64)          │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ flatten (Flatten)                    │ (None, 65536)               │               0 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense (Dense)                        │ (None, 256)                 │      16,777,472 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_1 (Dense)                      │ (None, 61)                  │          15,677 │
+└──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+ Total params: 16,816,733 (64.15 MB)
+ Trainable params: 16,816,733 (64.15 MB)
+ Non-trainable params: 0 (0.00 B)
+tf.keras.utils.plot_model(model, show_shapes=True)
+No description has been provided for this image
+%%time
+
+callback = tf.keras.callbacks.EarlyStopping(
+    monitor='val_loss',
+    patience=3,
+    restore_best_weights=True
+)
+
+epochs = 10
+history = model.fit(
+    train_data,
+    validation_data=val_data,
+    epochs=epochs,
+    callbacks=[callback],
+    verbose=1
+)
+Epoch 1/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 186s 509ms/step - accuracy: 0.0603 - loss: 4.1003 - val_accuracy: 0.1327 - val_loss: 3.5231
+Epoch 2/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 179s 509ms/step - accuracy: 0.1880 - loss: 3.2629 - val_accuracy: 0.2010 - val_loss: 3.1239
+Epoch 3/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 180s 513ms/step - accuracy: 0.3810 - loss: 2.3520 - val_accuracy: 0.2149 - val_loss: 3.2500
+Epoch 4/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 181s 513ms/step - accuracy: 0.7091 - loss: 1.0905 - val_accuracy: 0.1910 - val_loss: 4.2684
+Epoch 5/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 183s 519ms/step - accuracy: 0.9430 - loss: 0.2409 - val_accuracy: 0.1832 - val_loss: 6.1707
+CPU times: user 1h 14min 57s, sys: 16min 9s, total: 1h 31min 7s
+Wall time: 15min 8s
+val_loss, val_accuracy = model.evaluate(val_data)
+
+print('Validation Accuracy:', val_accuracy)
+88/88 ━━━━━━━━━━━━━━━━━━━━ 10s 117ms/step - accuracy: 0.2043 - loss: 3.1130
+Validation Accuracy: 0.20099608600139618
+import seaborn as sns
+import pandas as pd
+import matplotlib.pyplot as plt
+
+eval_history = pd.DataFrame(history.history)
+eval_history['epoch'] = history.epoch
+sns.lineplot(x='epoch', y ='loss', data =eval_history)
+sns.lineplot(x='epoch', y ='val_loss', data =eval_history)
+plt.legend(labels=['training loss', 'validation loss'])
+<matplotlib.legend.Legend at 0x7f931406fa30>
+No description has been provided for this image
+sns.lineplot(x='epoch', y ='accuracy', data =eval_history)
+sns.lineplot(x='epoch', y ='val_accuracy', data =eval_history)
+plt.legend(labels=['training_accuracy', 'validation_accuracy'])
+<matplotlib.legend.Legend at 0x7f9264ea3f70>
+No description has been provided for this image
+##3.Build a second CNN model with data augmentation and dropout and evaluate it on the test dataset.
+data_augmentation = tf.keras.Sequential(
+  [
+    tf.keras.layers.RandomFlip("horizontal_and_vertical",
+                                                 input_shape=(image_height,
+                                                              image_width,
+                                                              image_channel)),
+    tf.keras.layers.RandomRotation(0.1),
+    tf.keras.layers.RandomTranslation(height_factor=0.1,width_factor = 0.1 ),
+    tf.keras.layers.RandomZoom(height_factor=(0.1, 0.1))
+  ]
+)
+/usr/local/lib/python3.10/dist-packages/keras/src/layers/preprocessing/tf_data_layer.py:19: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.
+  super().__init__(**kwargs)
+model = tf.keras.Sequential([
+  data_augmentation,
+  tf.keras.layers.Rescaling(1.0/255.0),
+
+  tf.keras.layers.Conv2D(16, 3, padding='same', activation='relu'),
+  tf.keras.layers.MaxPooling2D(),
+
+  tf.keras.layers.Conv2D(32, 3, padding='same', activation='relu'),
+  tf.keras.layers.MaxPooling2D(),
+
+  tf.keras.layers.Conv2D(64, 3, padding='same', activation='relu'),
+  tf.keras.layers.MaxPooling2D(),
+
+  tf.keras.layers.Dropout(0.2),
+
+  tf.keras.layers.Flatten(),
+
+  tf.keras.layers.Dense(256, activation='relu'),
+  tf.keras.layers.Dropout(0.2),
+
+  tf.keras.layers.Dense(lew_labels, activation=None)
+])
+model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])
+%%time
+callback = tf.keras.callbacks.EarlyStopping(
+    monitor='val_loss',
+    patience=3,
+    restore_best_weights=True
+)
+
+epochs = 10
+history = model.fit(
+    train_data,
+    validation_data=val_data,
+    epochs=epochs,
+    callbacks=[callback],
+    verbose=1
+)
+Epoch 1/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 213s 601ms/step - accuracy: 0.0613 - loss: 3.9817 - val_accuracy: 0.1117 - val_loss: 3.6141
+Epoch 2/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 211s 599ms/step - accuracy: 0.1051 - loss: 3.6447 - val_accuracy: 0.1217 - val_loss: 3.4631
+Epoch 3/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 211s 598ms/step - accuracy: 0.1287 - loss: 3.4712 - val_accuracy: 0.1405 - val_loss: 3.3414
+Epoch 4/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 210s 598ms/step - accuracy: 0.1425 - loss: 3.3464 - val_accuracy: 0.1789 - val_loss: 3.2062
+Epoch 5/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 216s 614ms/step - accuracy: 0.1656 - loss: 3.2660 - val_accuracy: 0.1846 - val_loss: 3.2082
+Epoch 6/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 216s 614ms/step - accuracy: 0.1799 - loss: 3.1797 - val_accuracy: 0.2156 - val_loss: 3.0302
+Epoch 7/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 212s 603ms/step - accuracy: 0.1849 - loss: 3.1111 - val_accuracy: 0.2102 - val_loss: 3.0528
+Epoch 8/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 212s 601ms/step - accuracy: 0.1915 - loss: 3.0898 - val_accuracy: 0.2238 - val_loss: 2.9591
+Epoch 9/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 211s 599ms/step - accuracy: 0.2155 - loss: 3.0035 - val_accuracy: 0.2437 - val_loss: 2.9107
+Epoch 10/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 211s 599ms/step - accuracy: 0.2216 - loss: 2.9739 - val_accuracy: 0.2245 - val_loss: 2.9183
+CPU times: user 3h 5min 11s, sys: 33min 13s, total: 3h 38min 24s
+Wall time: 35min 21s
+val_loss, val_accuracy = model.evaluate(val_data)
+print('Validation accuracy of Second model with data augmentation and dropouts:', val_accuracy)
+88/88 ━━━━━━━━━━━━━━━━━━━━ 11s 120ms/step - accuracy: 0.2352 - loss: 2.9225
+Validation accuracy of Second model with data augmentation and dropouts: 0.2436855137348175
+eval_history = pd.DataFrame(history.history)
+eval_history['epoch'] = history.epoch
+sns.lineplot(x='epoch', y ='loss', data =eval_history)
+sns.lineplot(x='epoch', y ='val_loss', data =eval_history)
+plt.legend(labels=['training loss', 'validation loss'])
+<matplotlib.legend.Legend at 0x7f9294233730>
+No description has been provided for this image
+sns.lineplot(x='epoch', y ='accuracy', data =eval_history)
+sns.lineplot(x='epoch', y ='val_accuracy', data =eval_history)
+plt.legend(labels=['training accuracy', 'validation accuracy'])
+<matplotlib.legend.Legend at 0x7f9264b12d10>
+No description has been provided for this image
+##4.Build a third CNN model based on the pre-trained model(transfer learning) and evaluate it on the test dataset.
+import h5py
+image = (image_height, image_width, image_channel)
+
+MobileNetV3Large_model = tf.keras.applications.MobileNetV3Large(input_shape = image,
+                                               include_top=False,
+                                               weights='imagenet')
+/usr/local/lib/python3.10/dist-packages/keras/src/applications/mobilenet_v3.py:517: UserWarning: `input_shape` is undefined or non-square, or `rows` is not 224. Weights for input shape (224, 224) will be loaded as the default.
+  return MobileNetV3(
+Downloading data from https://storage.googleapis.com/tensorflow/keras-applications/mobilenet_v3/weights_mobilenet_v3_large_224_1.0_float_no_top_v2.h5
+12683000/12683000 ━━━━━━━━━━━━━━━━━━━━ 0s 0us/step
+tf.keras.utils.plot_model(MobileNetV3Large_model, show_shapes=True)
+dot: graph is too large for cairo-renderer bitmaps. Scaling by 0.484798 to fit
+
+No description has been provided for this image
+MobileNetV3Large_model.summary()
+Model: "MobileNetV3Large"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Layer (type)              ┃ Output Shape           ┃        Param # ┃ Connected to           ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ input_layer_3             │ (None, 256, 256, 3)    │              0 │ -                      │
+│ (InputLayer)              │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ rescaling_3 (Rescaling)   │ (None, 256, 256, 3)    │              0 │ input_layer_3[0][0]    │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ conv (Conv2D)             │ (None, 128, 128, 16)   │            432 │ rescaling_3[0][0]      │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ conv_bn                   │ (None, 128, 128, 16)   │             64 │ conv[0][0]             │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation (Activation)   │ (None, 128, 128, 16)   │              0 │ conv_bn[0][0]          │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_depthwise   │ (None, 128, 128, 16)   │            144 │ activation[0][0]       │
+│ (DepthwiseConv2D)         │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_depthwise_… │ (None, 128, 128, 16)   │             64 │ expanded_conv_depthwi… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu (ReLU)              │ (None, 128, 128, 16)   │              0 │ expanded_conv_depthwi… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_project     │ (None, 128, 128, 16)   │            256 │ re_lu[0][0]            │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_project_bn  │ (None, 128, 128, 16)   │             64 │ expanded_conv_project… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_add (Add)   │ (None, 128, 128, 16)   │              0 │ activation[0][0],      │
+│                           │                        │                │ expanded_conv_project… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_1_expand    │ (None, 128, 128, 64)   │          1,024 │ expanded_conv_add[0][… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_1_expand_bn │ (None, 128, 128, 64)   │            256 │ expanded_conv_1_expan… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_1 (ReLU)            │ (None, 128, 128, 64)   │              0 │ expanded_conv_1_expan… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_1_depthwis… │ (None, 129, 129, 64)   │              0 │ re_lu_1[0][0]          │
+│ (ZeroPadding2D)           │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_1_depthwise │ (None, 64, 64, 64)     │            576 │ expanded_conv_1_depth… │
+│ (DepthwiseConv2D)         │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_1_depthwis… │ (None, 64, 64, 64)     │            256 │ expanded_conv_1_depth… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_2 (ReLU)            │ (None, 64, 64, 64)     │              0 │ expanded_conv_1_depth… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_1_project   │ (None, 64, 64, 24)     │          1,536 │ re_lu_2[0][0]          │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_1_project_… │ (None, 64, 64, 24)     │             96 │ expanded_conv_1_proje… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_2_expand    │ (None, 64, 64, 72)     │          1,728 │ expanded_conv_1_proje… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_2_expand_bn │ (None, 64, 64, 72)     │            288 │ expanded_conv_2_expan… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_3 (ReLU)            │ (None, 64, 64, 72)     │              0 │ expanded_conv_2_expan… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_2_depthwise │ (None, 64, 64, 72)     │            648 │ re_lu_3[0][0]          │
+│ (DepthwiseConv2D)         │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_2_depthwis… │ (None, 64, 64, 72)     │            288 │ expanded_conv_2_depth… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_4 (ReLU)            │ (None, 64, 64, 72)     │              0 │ expanded_conv_2_depth… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_2_project   │ (None, 64, 64, 24)     │          1,728 │ re_lu_4[0][0]          │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_2_project_… │ (None, 64, 64, 24)     │             96 │ expanded_conv_2_proje… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_2_add (Add) │ (None, 64, 64, 24)     │              0 │ expanded_conv_1_proje… │
+│                           │                        │                │ expanded_conv_2_proje… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_3_expand    │ (None, 64, 64, 72)     │          1,728 │ expanded_conv_2_add[0… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_3_expand_bn │ (None, 64, 64, 72)     │            288 │ expanded_conv_3_expan… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_5 (ReLU)            │ (None, 64, 64, 72)     │              0 │ expanded_conv_3_expan… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_3_depthwis… │ (None, 67, 67, 72)     │              0 │ re_lu_5[0][0]          │
+│ (ZeroPadding2D)           │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_3_depthwise │ (None, 32, 32, 72)     │          1,800 │ expanded_conv_3_depth… │
+│ (DepthwiseConv2D)         │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_3_depthwis… │ (None, 32, 32, 72)     │            288 │ expanded_conv_3_depth… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_6 (ReLU)            │ (None, 32, 32, 72)     │              0 │ expanded_conv_3_depth… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_3_squeeze_… │ (None, 1, 1, 72)       │              0 │ re_lu_6[0][0]          │
+│ (GlobalAveragePooling2D)  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_3_squeeze_… │ (None, 1, 1, 24)       │          1,752 │ expanded_conv_3_squee… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_3_squeeze_… │ (None, 1, 1, 24)       │              0 │ expanded_conv_3_squee… │
+│ (ReLU)                    │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_3_squeeze_… │ (None, 1, 1, 72)       │          1,800 │ expanded_conv_3_squee… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ add (Add)                 │ (None, 1, 1, 72)       │              0 │ expanded_conv_3_squee… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_7 (ReLU)            │ (None, 1, 1, 72)       │              0 │ add[0][0]              │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ multiply (Multiply)       │ (None, 1, 1, 72)       │              0 │ re_lu_7[0][0]          │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_3_squeeze_… │ (None, 32, 32, 72)     │              0 │ re_lu_6[0][0],         │
+│ (Multiply)                │                        │                │ multiply[0][0]         │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_3_project   │ (None, 32, 32, 40)     │          2,880 │ expanded_conv_3_squee… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_3_project_… │ (None, 32, 32, 40)     │            160 │ expanded_conv_3_proje… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_4_expand    │ (None, 32, 32, 120)    │          4,800 │ expanded_conv_3_proje… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_4_expand_bn │ (None, 32, 32, 120)    │            480 │ expanded_conv_4_expan… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_8 (ReLU)            │ (None, 32, 32, 120)    │              0 │ expanded_conv_4_expan… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_4_depthwise │ (None, 32, 32, 120)    │          3,000 │ re_lu_8[0][0]          │
+│ (DepthwiseConv2D)         │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_4_depthwis… │ (None, 32, 32, 120)    │            480 │ expanded_conv_4_depth… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_9 (ReLU)            │ (None, 32, 32, 120)    │              0 │ expanded_conv_4_depth… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_4_squeeze_… │ (None, 1, 1, 120)      │              0 │ re_lu_9[0][0]          │
+│ (GlobalAveragePooling2D)  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_4_squeeze_… │ (None, 1, 1, 32)       │          3,872 │ expanded_conv_4_squee… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_4_squeeze_… │ (None, 1, 1, 32)       │              0 │ expanded_conv_4_squee… │
+│ (ReLU)                    │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_4_squeeze_… │ (None, 1, 1, 120)      │          3,960 │ expanded_conv_4_squee… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ add_1 (Add)               │ (None, 1, 1, 120)      │              0 │ expanded_conv_4_squee… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_10 (ReLU)           │ (None, 1, 1, 120)      │              0 │ add_1[0][0]            │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ multiply_1 (Multiply)     │ (None, 1, 1, 120)      │              0 │ re_lu_10[0][0]         │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_4_squeeze_… │ (None, 32, 32, 120)    │              0 │ re_lu_9[0][0],         │
+│ (Multiply)                │                        │                │ multiply_1[0][0]       │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_4_project   │ (None, 32, 32, 40)     │          4,800 │ expanded_conv_4_squee… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_4_project_… │ (None, 32, 32, 40)     │            160 │ expanded_conv_4_proje… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_4_add (Add) │ (None, 32, 32, 40)     │              0 │ expanded_conv_3_proje… │
+│                           │                        │                │ expanded_conv_4_proje… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_5_expand    │ (None, 32, 32, 120)    │          4,800 │ expanded_conv_4_add[0… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_5_expand_bn │ (None, 32, 32, 120)    │            480 │ expanded_conv_5_expan… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_11 (ReLU)           │ (None, 32, 32, 120)    │              0 │ expanded_conv_5_expan… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_5_depthwise │ (None, 32, 32, 120)    │          3,000 │ re_lu_11[0][0]         │
+│ (DepthwiseConv2D)         │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_5_depthwis… │ (None, 32, 32, 120)    │            480 │ expanded_conv_5_depth… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_12 (ReLU)           │ (None, 32, 32, 120)    │              0 │ expanded_conv_5_depth… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_5_squeeze_… │ (None, 1, 1, 120)      │              0 │ re_lu_12[0][0]         │
+│ (GlobalAveragePooling2D)  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_5_squeeze_… │ (None, 1, 1, 32)       │          3,872 │ expanded_conv_5_squee… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_5_squeeze_… │ (None, 1, 1, 32)       │              0 │ expanded_conv_5_squee… │
+│ (ReLU)                    │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_5_squeeze_… │ (None, 1, 1, 120)      │          3,960 │ expanded_conv_5_squee… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ add_2 (Add)               │ (None, 1, 1, 120)      │              0 │ expanded_conv_5_squee… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_13 (ReLU)           │ (None, 1, 1, 120)      │              0 │ add_2[0][0]            │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ multiply_2 (Multiply)     │ (None, 1, 1, 120)      │              0 │ re_lu_13[0][0]         │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_5_squeeze_… │ (None, 32, 32, 120)    │              0 │ re_lu_12[0][0],        │
+│ (Multiply)                │                        │                │ multiply_2[0][0]       │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_5_project   │ (None, 32, 32, 40)     │          4,800 │ expanded_conv_5_squee… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_5_project_… │ (None, 32, 32, 40)     │            160 │ expanded_conv_5_proje… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_5_add (Add) │ (None, 32, 32, 40)     │              0 │ expanded_conv_4_add[0… │
+│                           │                        │                │ expanded_conv_5_proje… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_6_expand    │ (None, 32, 32, 240)    │          9,600 │ expanded_conv_5_add[0… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_6_expand_bn │ (None, 32, 32, 240)    │            960 │ expanded_conv_6_expan… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_1 (Activation) │ (None, 32, 32, 240)    │              0 │ expanded_conv_6_expan… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_6_depthwis… │ (None, 33, 33, 240)    │              0 │ activation_1[0][0]     │
+│ (ZeroPadding2D)           │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_6_depthwise │ (None, 16, 16, 240)    │          2,160 │ expanded_conv_6_depth… │
+│ (DepthwiseConv2D)         │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_6_depthwis… │ (None, 16, 16, 240)    │            960 │ expanded_conv_6_depth… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_2 (Activation) │ (None, 16, 16, 240)    │              0 │ expanded_conv_6_depth… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_6_project   │ (None, 16, 16, 80)     │         19,200 │ activation_2[0][0]     │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_6_project_… │ (None, 16, 16, 80)     │            320 │ expanded_conv_6_proje… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_7_expand    │ (None, 16, 16, 200)    │         16,000 │ expanded_conv_6_proje… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_7_expand_bn │ (None, 16, 16, 200)    │            800 │ expanded_conv_7_expan… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_3 (Activation) │ (None, 16, 16, 200)    │              0 │ expanded_conv_7_expan… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_7_depthwise │ (None, 16, 16, 200)    │          1,800 │ activation_3[0][0]     │
+│ (DepthwiseConv2D)         │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_7_depthwis… │ (None, 16, 16, 200)    │            800 │ expanded_conv_7_depth… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_4 (Activation) │ (None, 16, 16, 200)    │              0 │ expanded_conv_7_depth… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_7_project   │ (None, 16, 16, 80)     │         16,000 │ activation_4[0][0]     │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_7_project_… │ (None, 16, 16, 80)     │            320 │ expanded_conv_7_proje… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_7_add (Add) │ (None, 16, 16, 80)     │              0 │ expanded_conv_6_proje… │
+│                           │                        │                │ expanded_conv_7_proje… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_8_expand    │ (None, 16, 16, 184)    │         14,720 │ expanded_conv_7_add[0… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_8_expand_bn │ (None, 16, 16, 184)    │            736 │ expanded_conv_8_expan… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_5 (Activation) │ (None, 16, 16, 184)    │              0 │ expanded_conv_8_expan… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_8_depthwise │ (None, 16, 16, 184)    │          1,656 │ activation_5[0][0]     │
+│ (DepthwiseConv2D)         │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_8_depthwis… │ (None, 16, 16, 184)    │            736 │ expanded_conv_8_depth… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_6 (Activation) │ (None, 16, 16, 184)    │              0 │ expanded_conv_8_depth… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_8_project   │ (None, 16, 16, 80)     │         14,720 │ activation_6[0][0]     │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_8_project_… │ (None, 16, 16, 80)     │            320 │ expanded_conv_8_proje… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_8_add (Add) │ (None, 16, 16, 80)     │              0 │ expanded_conv_7_add[0… │
+│                           │                        │                │ expanded_conv_8_proje… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_9_expand    │ (None, 16, 16, 184)    │         14,720 │ expanded_conv_8_add[0… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_9_expand_bn │ (None, 16, 16, 184)    │            736 │ expanded_conv_9_expan… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_7 (Activation) │ (None, 16, 16, 184)    │              0 │ expanded_conv_9_expan… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_9_depthwise │ (None, 16, 16, 184)    │          1,656 │ activation_7[0][0]     │
+│ (DepthwiseConv2D)         │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_9_depthwis… │ (None, 16, 16, 184)    │            736 │ expanded_conv_9_depth… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_8 (Activation) │ (None, 16, 16, 184)    │              0 │ expanded_conv_9_depth… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_9_project   │ (None, 16, 16, 80)     │         14,720 │ activation_8[0][0]     │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_9_project_… │ (None, 16, 16, 80)     │            320 │ expanded_conv_9_proje… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_9_add (Add) │ (None, 16, 16, 80)     │              0 │ expanded_conv_8_add[0… │
+│                           │                        │                │ expanded_conv_9_proje… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_10_expand   │ (None, 16, 16, 480)    │         38,400 │ expanded_conv_9_add[0… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_10_expand_… │ (None, 16, 16, 480)    │          1,920 │ expanded_conv_10_expa… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_9 (Activation) │ (None, 16, 16, 480)    │              0 │ expanded_conv_10_expa… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_10_depthwi… │ (None, 16, 16, 480)    │          4,320 │ activation_9[0][0]     │
+│ (DepthwiseConv2D)         │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_10_depthwi… │ (None, 16, 16, 480)    │          1,920 │ expanded_conv_10_dept… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_10             │ (None, 16, 16, 480)    │              0 │ expanded_conv_10_dept… │
+│ (Activation)              │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_10_squeeze… │ (None, 1, 1, 480)      │              0 │ activation_10[0][0]    │
+│ (GlobalAveragePooling2D)  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_10_squeeze… │ (None, 1, 1, 120)      │         57,720 │ expanded_conv_10_sque… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_10_squeeze… │ (None, 1, 1, 120)      │              0 │ expanded_conv_10_sque… │
+│ (ReLU)                    │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_10_squeeze… │ (None, 1, 1, 480)      │         58,080 │ expanded_conv_10_sque… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ add_3 (Add)               │ (None, 1, 1, 480)      │              0 │ expanded_conv_10_sque… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_14 (ReLU)           │ (None, 1, 1, 480)      │              0 │ add_3[0][0]            │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ multiply_3 (Multiply)     │ (None, 1, 1, 480)      │              0 │ re_lu_14[0][0]         │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_10_squeeze… │ (None, 16, 16, 480)    │              0 │ activation_10[0][0],   │
+│ (Multiply)                │                        │                │ multiply_3[0][0]       │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_10_project  │ (None, 16, 16, 112)    │         53,760 │ expanded_conv_10_sque… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_10_project… │ (None, 16, 16, 112)    │            448 │ expanded_conv_10_proj… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_11_expand   │ (None, 16, 16, 672)    │         75,264 │ expanded_conv_10_proj… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_11_expand_… │ (None, 16, 16, 672)    │          2,688 │ expanded_conv_11_expa… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_11             │ (None, 16, 16, 672)    │              0 │ expanded_conv_11_expa… │
+│ (Activation)              │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_11_depthwi… │ (None, 16, 16, 672)    │          6,048 │ activation_11[0][0]    │
+│ (DepthwiseConv2D)         │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_11_depthwi… │ (None, 16, 16, 672)    │          2,688 │ expanded_conv_11_dept… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_12             │ (None, 16, 16, 672)    │              0 │ expanded_conv_11_dept… │
+│ (Activation)              │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_11_squeeze… │ (None, 1, 1, 672)      │              0 │ activation_12[0][0]    │
+│ (GlobalAveragePooling2D)  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_11_squeeze… │ (None, 1, 1, 168)      │        113,064 │ expanded_conv_11_sque… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_11_squeeze… │ (None, 1, 1, 168)      │              0 │ expanded_conv_11_sque… │
+│ (ReLU)                    │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_11_squeeze… │ (None, 1, 1, 672)      │        113,568 │ expanded_conv_11_sque… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ add_4 (Add)               │ (None, 1, 1, 672)      │              0 │ expanded_conv_11_sque… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_15 (ReLU)           │ (None, 1, 1, 672)      │              0 │ add_4[0][0]            │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ multiply_4 (Multiply)     │ (None, 1, 1, 672)      │              0 │ re_lu_15[0][0]         │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_11_squeeze… │ (None, 16, 16, 672)    │              0 │ activation_12[0][0],   │
+│ (Multiply)                │                        │                │ multiply_4[0][0]       │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_11_project  │ (None, 16, 16, 112)    │         75,264 │ expanded_conv_11_sque… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_11_project… │ (None, 16, 16, 112)    │            448 │ expanded_conv_11_proj… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_11_add      │ (None, 16, 16, 112)    │              0 │ expanded_conv_10_proj… │
+│ (Add)                     │                        │                │ expanded_conv_11_proj… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_12_expand   │ (None, 16, 16, 672)    │         75,264 │ expanded_conv_11_add[… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_12_expand_… │ (None, 16, 16, 672)    │          2,688 │ expanded_conv_12_expa… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_13             │ (None, 16, 16, 672)    │              0 │ expanded_conv_12_expa… │
+│ (Activation)              │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_12_depthwi… │ (None, 19, 19, 672)    │              0 │ activation_13[0][0]    │
+│ (ZeroPadding2D)           │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_12_depthwi… │ (None, 8, 8, 672)      │         16,800 │ expanded_conv_12_dept… │
+│ (DepthwiseConv2D)         │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_12_depthwi… │ (None, 8, 8, 672)      │          2,688 │ expanded_conv_12_dept… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_14             │ (None, 8, 8, 672)      │              0 │ expanded_conv_12_dept… │
+│ (Activation)              │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_12_squeeze… │ (None, 1, 1, 672)      │              0 │ activation_14[0][0]    │
+│ (GlobalAveragePooling2D)  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_12_squeeze… │ (None, 1, 1, 168)      │        113,064 │ expanded_conv_12_sque… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_12_squeeze… │ (None, 1, 1, 168)      │              0 │ expanded_conv_12_sque… │
+│ (ReLU)                    │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_12_squeeze… │ (None, 1, 1, 672)      │        113,568 │ expanded_conv_12_sque… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ add_5 (Add)               │ (None, 1, 1, 672)      │              0 │ expanded_conv_12_sque… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_16 (ReLU)           │ (None, 1, 1, 672)      │              0 │ add_5[0][0]            │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ multiply_5 (Multiply)     │ (None, 1, 1, 672)      │              0 │ re_lu_16[0][0]         │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_12_squeeze… │ (None, 8, 8, 672)      │              0 │ activation_14[0][0],   │
+│ (Multiply)                │                        │                │ multiply_5[0][0]       │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_12_project  │ (None, 8, 8, 160)      │        107,520 │ expanded_conv_12_sque… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_12_project… │ (None, 8, 8, 160)      │            640 │ expanded_conv_12_proj… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_13_expand   │ (None, 8, 8, 960)      │        153,600 │ expanded_conv_12_proj… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_13_expand_… │ (None, 8, 8, 960)      │          3,840 │ expanded_conv_13_expa… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_15             │ (None, 8, 8, 960)      │              0 │ expanded_conv_13_expa… │
+│ (Activation)              │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_13_depthwi… │ (None, 8, 8, 960)      │         24,000 │ activation_15[0][0]    │
+│ (DepthwiseConv2D)         │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_13_depthwi… │ (None, 8, 8, 960)      │          3,840 │ expanded_conv_13_dept… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_16             │ (None, 8, 8, 960)      │              0 │ expanded_conv_13_dept… │
+│ (Activation)              │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_13_squeeze… │ (None, 1, 1, 960)      │              0 │ activation_16[0][0]    │
+│ (GlobalAveragePooling2D)  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_13_squeeze… │ (None, 1, 1, 240)      │        230,640 │ expanded_conv_13_sque… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_13_squeeze… │ (None, 1, 1, 240)      │              0 │ expanded_conv_13_sque… │
+│ (ReLU)                    │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_13_squeeze… │ (None, 1, 1, 960)      │        231,360 │ expanded_conv_13_sque… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ add_6 (Add)               │ (None, 1, 1, 960)      │              0 │ expanded_conv_13_sque… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_17 (ReLU)           │ (None, 1, 1, 960)      │              0 │ add_6[0][0]            │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ multiply_6 (Multiply)     │ (None, 1, 1, 960)      │              0 │ re_lu_17[0][0]         │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_13_squeeze… │ (None, 8, 8, 960)      │              0 │ activation_16[0][0],   │
+│ (Multiply)                │                        │                │ multiply_6[0][0]       │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_13_project  │ (None, 8, 8, 160)      │        153,600 │ expanded_conv_13_sque… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_13_project… │ (None, 8, 8, 160)      │            640 │ expanded_conv_13_proj… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_13_add      │ (None, 8, 8, 160)      │              0 │ expanded_conv_12_proj… │
+│ (Add)                     │                        │                │ expanded_conv_13_proj… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_14_expand   │ (None, 8, 8, 960)      │        153,600 │ expanded_conv_13_add[… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_14_expand_… │ (None, 8, 8, 960)      │          3,840 │ expanded_conv_14_expa… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_17             │ (None, 8, 8, 960)      │              0 │ expanded_conv_14_expa… │
+│ (Activation)              │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_14_depthwi… │ (None, 8, 8, 960)      │         24,000 │ activation_17[0][0]    │
+│ (DepthwiseConv2D)         │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_14_depthwi… │ (None, 8, 8, 960)      │          3,840 │ expanded_conv_14_dept… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_18             │ (None, 8, 8, 960)      │              0 │ expanded_conv_14_dept… │
+│ (Activation)              │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_14_squeeze… │ (None, 1, 1, 960)      │              0 │ activation_18[0][0]    │
+│ (GlobalAveragePooling2D)  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_14_squeeze… │ (None, 1, 1, 240)      │        230,640 │ expanded_conv_14_sque… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_14_squeeze… │ (None, 1, 1, 240)      │              0 │ expanded_conv_14_sque… │
+│ (ReLU)                    │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_14_squeeze… │ (None, 1, 1, 960)      │        231,360 │ expanded_conv_14_sque… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ add_7 (Add)               │ (None, 1, 1, 960)      │              0 │ expanded_conv_14_sque… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ re_lu_18 (ReLU)           │ (None, 1, 1, 960)      │              0 │ add_7[0][0]            │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ multiply_7 (Multiply)     │ (None, 1, 1, 960)      │              0 │ re_lu_18[0][0]         │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_14_squeeze… │ (None, 8, 8, 960)      │              0 │ activation_18[0][0],   │
+│ (Multiply)                │                        │                │ multiply_7[0][0]       │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_14_project  │ (None, 8, 8, 160)      │        153,600 │ expanded_conv_14_sque… │
+│ (Conv2D)                  │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_14_project… │ (None, 8, 8, 160)      │            640 │ expanded_conv_14_proj… │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ expanded_conv_14_add      │ (None, 8, 8, 160)      │              0 │ expanded_conv_13_add[… │
+│ (Add)                     │                        │                │ expanded_conv_14_proj… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ conv_1 (Conv2D)           │ (None, 8, 8, 960)      │        153,600 │ expanded_conv_14_add[… │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ conv_1_bn                 │ (None, 8, 8, 960)      │          3,840 │ conv_1[0][0]           │
+│ (BatchNormalization)      │                        │                │                        │
+├───────────────────────────┼────────────────────────┼────────────────┼────────────────────────┤
+│ activation_19             │ (None, 8, 8, 960)      │              0 │ conv_1_bn[0][0]        │
+│ (Activation)              │                        │                │                        │
+└───────────────────────────┴────────────────────────┴────────────────┴────────────────────────┘
+ Total params: 2,996,352 (11.43 MB)
+ Trainable params: 2,971,952 (11.34 MB)
+ Non-trainable params: 24,400 (95.31 KB)
+MobileNetV3Large_model.trainable = False
+preprocess_input = tf.keras.applications.mobilenet_v3.preprocess_input
+image_batch, label_batch = next(iter(train_data))
+feature_batch = MobileNetV3Large_model(image_batch)
+print(feature_batch.shape)
+(32, 8, 8, 960)
+global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
+feature_batch_average = global_average_layer(feature_batch)
+print(feature_batch_average.shape)
+(32, 960)
+prediction_layer = tf.keras.layers.Dense(61)
+prediction_batch = prediction_layer(feature_batch_average)
+print(f' The size of the predicted value for a given batch = {prediction_batch.shape}')
+print(prediction_batch)
+ The size of the predicted value for a given batch = (32, 61)
+tf.Tensor(
+[[-0.7698323  -0.82588696  0.10729089 ...  1.5179113   0.06083179
+  -0.5654404 ]
+ [-0.70323837  2.7737553   0.76520574 ... -0.40630877 -0.30748272
+   0.01340389]
+ [-0.37533164  0.02625991  0.25447124 ...  0.8848752  -0.5075369
+   0.16754846]
+ ...
+ [ 0.55586374  1.8226867   0.59260774 ... -1.284816   -0.08702564
+  -0.5939352 ]
+ [ 0.12338772  1.2350097   0.45671123 ...  0.30982086  0.5238796
+  -1.7983317 ]
+ [ 0.5605968   1.0846     -0.35848516 ... -0.43614668 -0.5410754
+  -0.3369372 ]], shape=(32, 61), dtype=float32)
+inputs = tf.keras.Input(shape = image)
+x = data_augmentation(inputs)
+x = preprocess_input(x)
+x = MobileNetV3Large_model(x, training=False)
+x = global_average_layer(x)
+x = tf.keras.layers.Dropout(0.2)(x)
+outputs = prediction_layer(x)
+model = tf.keras.Model(inputs, outputs)
+learning_rate = 0.0001
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate),
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])
+tf.keras.utils.plot_model(model, show_shapes=True)
+No description has been provided for this image
+early_stopping = tf.keras.callbacks.EarlyStopping(
+    monitor='val_accuracy',
+    patience=5,
+    restore_best_weights=True,
+    min_delta=0.01
+)
+epochs = 10
+%%time
+history = model.fit(
+    train_data,
+    validation_data=val_data,
+    epochs=epochs,
+    callbacks=[early_stopping],
+    verbose=1
+)
+Epoch 1/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 160s 443ms/step - accuracy: 0.0540 - loss: 4.4359 - val_accuracy: 0.1700 - val_loss: 3.3299
+Epoch 2/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 154s 438ms/step - accuracy: 0.1561 - loss: 3.4079 - val_accuracy: 0.3184 - val_loss: 2.6370
+Epoch 3/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 154s 437ms/step - accuracy: 0.2597 - loss: 2.9136 - val_accuracy: 0.4105 - val_loss: 2.2102
+Epoch 4/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 153s 435ms/step - accuracy: 0.3299 - loss: 2.5485 - val_accuracy: 0.4778 - val_loss: 1.9196
+Epoch 5/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 153s 435ms/step - accuracy: 0.3823 - loss: 2.3397 - val_accuracy: 0.5190 - val_loss: 1.7455
+Epoch 6/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 155s 440ms/step - accuracy: 0.4361 - loss: 2.1486 - val_accuracy: 0.5557 - val_loss: 1.6008
+Epoch 7/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 152s 433ms/step - accuracy: 0.4522 - loss: 2.0376 - val_accuracy: 0.5784 - val_loss: 1.5051
+Epoch 8/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 153s 436ms/step - accuracy: 0.4859 - loss: 1.8919 - val_accuracy: 0.5962 - val_loss: 1.4192
+Epoch 9/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 152s 433ms/step - accuracy: 0.5053 - loss: 1.8258 - val_accuracy: 0.6105 - val_loss: 1.3543
+Epoch 10/10
+352/352 ━━━━━━━━━━━━━━━━━━━━ 154s 437ms/step - accuracy: 0.5171 - loss: 1.7803 - val_accuracy: 0.6201 - val_loss: 1.2972
+CPU times: user 2h 19min 12s, sys: 23min 45s, total: 2h 42min 58s
+Wall time: 25min 40s
+val_loss, val_accuracy = model.evaluate(val_data)
+print('Validation accuracy of Pre-trained Model:', val_accuracy)
+88/88 ━━━━━━━━━━━━━━━━━━━━ 24s 278ms/step - accuracy: 0.5945 - loss: 1.4021
+Validation accuracy of Pre-trained Model: 0.6104589104652405
+eval_history = pd.DataFrame(history.history)
+eval_history['epoch'] = history.epoch
+sns.lineplot(x='epoch', y ='loss', data =eval_history)
+sns.lineplot(x='epoch', y ='val_loss', data =eval_history)
+plt.legend(labels=['training loss', 'validation loss'])
+<matplotlib.legend.Legend at 0x7f922c7c42e0>
+No description has been provided for this image
+sns.lineplot(x='epoch', y ='accuracy', data =eval_history)
+sns.lineplot(x='epoch', y ='val_accuracy', data =eval_history)
+plt.legend(labels=['training accuracy', 'validation accuracy'])
+<matplotlib.legend.Legend at 0x7f9264d61780>
+No description has been provided for this image
+##5.Which model do you recommend for the model in Q2, Q3, and Q4? Justify your answer.
+##I recommend using the Pre-trained Model (Transfer Learning) from Q4 as the best model for this task. Here's why:
+
+##Superior Performance: The pre-trained model significantly outperformed the other two models in terms of validation accuracy.
+##This indicates its ability to generalize well to unseen data and achieve better overall performance.
+
+##Leveraging Existing Knowledge: Transfer learning utilizes the knowledge gained from training on a large dataset (ImageNet in this case)
+##and applies it to your specific task. This allows the model to learn more effectively and efficiently, even with a smaller dataset.
+
+##Data Augmentation and Dropout: The pre-trained model also incorporates data augmentation and dropout to further
+##enhance its generalization capabilities and reduce overfitting.
+
+##Justification:
+##The baseline CNN model in Q2 provides a decent starting point but lacks the robustness of the other models.
+##The CNN model with data augmentation and dropout in Q3 improves upon the baseline by introducing techniques to prevent
+##overfitting and improve generalization. However, the pre-trained model in Q4 delivers the best results by leveraging
+##the power of transfer learning. By utilizing the pre-trained weights and incorporating data augmentation and dropout,
+##it achieves significantly higher accuracy and demonstrates superior performance.
+##Therefore, considering the overall performance and advantages of transfer learning,
+##I strongly recommend using the pre-trained model from Q4 for your task.
